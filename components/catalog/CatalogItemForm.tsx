@@ -12,7 +12,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import type { CatalogCategory, CatalogItem } from "@/types/db";
 
 interface Props {
-  trigger: React.ReactNode;
+  trigger: React.ReactElement;
   categories: CatalogCategory[];
   item?: CatalogItem;
 }
@@ -21,6 +21,7 @@ export function CatalogItemForm({ trigger, categories, item }: Props) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [form, setForm] = useState({
     name: item?.name ?? "",
     sku: item?.sku ?? "",
@@ -54,19 +55,19 @@ export function CatalogItemForm({ trigger, categories, item }: Props) {
       list_price: form.list_price ? Number(form.list_price) : null,
       labor_hours: Number(form.labor_hours),
     };
-    if (item) {
-      await supabase.from("catalog_items").update(payload).eq("id", item.id);
-    } else {
-      await supabase.from("catalog_items").insert(payload);
-    }
+    const { error: err } = item
+      ? await supabase.from("catalog_items").update(payload).eq("id", item.id)
+      : await supabase.from("catalog_items").insert(payload);
     setSaving(false);
+    if (err) { setError(err.message); return; }
+    setError(null);
     setOpen(false);
     router.refresh();
   }
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger render={trigger as React.ReactElement}></SheetTrigger>
+      <SheetTrigger render={trigger}></SheetTrigger>
       <SheetContent className="w-full sm:max-w-lg overflow-y-auto">
         <SheetHeader className="mb-4">
           <SheetTitle>{item ? "Edit Item" : "New Catalog Item"}</SheetTitle>
@@ -129,6 +130,7 @@ export function CatalogItemForm({ trigger, categories, item }: Props) {
             <Label>Description</Label>
             <Textarea value={form.description} onChange={(e) => set("description", e.target.value)} rows={2} />
           </div>
+          {error && <p className="text-sm text-destructive">{error}</p>}
           <div className="flex justify-end gap-2 pt-2">
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
             <Button type="submit" disabled={saving}>{saving ? "Saving…" : "Save"}</Button>

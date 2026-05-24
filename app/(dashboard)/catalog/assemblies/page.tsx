@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { Plus, Layers } from "lucide-react";
 import { AssemblyForm } from "@/components/catalog/AssemblyForm";
+import { DeleteAssembly } from "@/components/catalog/DeleteAssembly";
 
 export default async function AssembliesPage() {
   const supabase = await createClient();
@@ -45,6 +46,7 @@ export default async function AssembliesPage() {
                   <AssemblyForm categories={categories ?? []} catalogItems={catalogItems ?? []} assembly={a as any} trigger={
                     <Button variant="outline" size="sm">Edit</Button>
                   } />
+                  <DeleteAssembly assemblyId={a.id} />
                 </div>
               </div>
               {a.description && <p className="text-sm text-muted-foreground mb-2">{a.description}</p>}

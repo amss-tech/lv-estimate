@@ -3,16 +3,17 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
+import { Trash2, Copy } from "lucide-react";
 import type { EstimateLineItem } from "@/types/db";
 
 interface Props {
   item: EstimateLineItem;
   onUpdate: (updates: Partial<EstimateLineItem>) => void;
   onDelete: () => void;
+  onDuplicate: () => void;
 }
 
-export function LineItemRow({ item, onUpdate, onDelete }: Props) {
+export function LineItemRow({ item, onUpdate, onDelete, onDuplicate }: Props) {
   const [qty, setQty] = useState(item.quantity);
   const [unitCost, setUnitCost] = useState(item.unit_cost);
   const [unitPrice, setUnitPrice] = useState(item.unit_price);
@@ -43,7 +44,7 @@ export function LineItemRow({ item, onUpdate, onDelete }: Props) {
   const total = unitPrice * qty;
 
   return (
-    <div className="grid grid-cols-[1fr_70px_80px_80px_80px_80px_32px] gap-1 px-3 py-1.5 border-b last:border-0 hover:bg-muted/30 items-center text-sm">
+    <div className="grid grid-cols-[1fr_70px_80px_80px_80px_80px_56px] gap-1 px-3 py-1.5 border-b last:border-0 hover:bg-muted/30 items-center text-sm">
       <div className="min-w-0">
         <p className="truncate font-medium">{item.name}</p>
         {item.description && <p className="truncate text-xs text-muted-foreground">{item.description}</p>}
@@ -58,10 +59,14 @@ export function LineItemRow({ item, onUpdate, onDelete }: Props) {
         ${total.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
       </span>
 
-      <button onClick={onDelete}
-        className="text-muted-foreground hover:text-destructive transition-colors justify-self-center">
-        <Trash2 className="h-3.5 w-3.5" />
-      </button>
+      <div className="flex gap-1 justify-self-center">
+        <button onClick={onDuplicate} className="text-muted-foreground hover:text-foreground transition-colors" title="Duplicate">
+          <Copy className="h-3.5 w-3.5" />
+        </button>
+        <button onClick={onDelete} className="text-muted-foreground hover:text-destructive transition-colors" title="Delete">
+          <Trash2 className="h-3.5 w-3.5" />
+        </button>
+      </div>
     </div>
   );
 }

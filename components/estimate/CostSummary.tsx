@@ -8,6 +8,7 @@ interface Props {
   lineItems: EstimateLineItem[];
   overheadPct: number;
   profitPct: number;
+  laborRate: number;
 }
 
 function fmt(n: number) {
@@ -18,13 +19,12 @@ function fmtHrs(n: number) {
   return `${n.toFixed(1)} hrs`;
 }
 
-export function CostSummary({ lineItems, overheadPct, profitPct }: Props) {
+export function CostSummary({ lineItems, overheadPct, profitPct, laborRate }: Props) {
   const materialCost = lineItems
     .filter((l) => l.type !== "labor")
     .reduce((sum, l) => sum + l.unit_cost * l.quantity, 0);
 
   const laborHours = lineItems.reduce((sum, l) => sum + l.labor_hours, 0);
-  const laborRate = 85; // $/hr — TODO: make configurable
   const laborCost = laborHours * laborRate;
 
   const directCost = materialCost + laborCost;

@@ -16,6 +16,7 @@ interface Props {
   assemblies: (Assembly & { components: any[] })[];
   onUpdateItem: (id: string, updates: Partial<EstimateLineItem>) => void;
   onDeleteItem: (id: string) => void;
+  onDuplicateItem: (id: string) => void;
   onUpdateName?: (name: string) => void;
   onDelete?: () => void;
   onAddFromCatalog: (item: CatalogItem) => void;
@@ -24,7 +25,7 @@ interface Props {
 
 export function SectionBlock({
   name, sectionId, items, catalogItems, assemblies,
-  onUpdateItem, onDeleteItem, onUpdateName, onDelete,
+  onUpdateItem, onDeleteItem, onDuplicateItem, onUpdateName, onDelete,
   onAddFromCatalog, onAddAssembly,
 }: Props) {
   const [collapsed, setCollapsed] = useState(false);
@@ -70,7 +71,7 @@ export function SectionBlock({
         <div>
           {/* Column headers */}
           {items.length > 0 && (
-            <div className="grid grid-cols-[1fr_70px_80px_80px_80px_80px_32px] gap-1 px-3 py-1 text-xs text-muted-foreground border-b bg-muted/20">
+            <div className="grid grid-cols-[1fr_70px_80px_80px_80px_80px_56px] gap-1 px-3 py-1 text-xs text-muted-foreground border-b bg-muted/20">
               <span>Item</span><span className="text-center">Qty</span>
               <span className="text-right">Unit Cost</span>
               <span className="text-right">Unit Price</span>
@@ -89,7 +90,8 @@ export function SectionBlock({
           {items.map((item) => (
             <LineItemRow key={item.id} item={item}
               onUpdate={(updates) => onUpdateItem(item.id, updates)}
-              onDelete={() => onDeleteItem(item.id)} />
+              onDelete={() => onDeleteItem(item.id)}
+              onDuplicate={() => onDuplicateItem(item.id)} />
           ))}
 
           {/* Add controls */}

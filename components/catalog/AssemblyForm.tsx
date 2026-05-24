@@ -22,7 +22,7 @@ interface ComponentDraft {
 }
 
 interface Props {
-  trigger: React.ReactNode;
+  trigger: React.ReactElement;
   categories: CatalogCategory[];
   catalogItems: Pick<CatalogItem, "id" | "name" | "unit" | "unit_cost" | "labor_hours">[];
   assembly?: Assembly & { components: (AssemblyComponent & { catalog_item: any })[] };
@@ -32,6 +32,7 @@ export function AssemblyForm({ trigger, categories, catalogItems, assembly }: Pr
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [name, setName] = useState(assembly?.name ?? "");
   const [description, setDescription] = useState(assembly?.description ?? "");
   const [categoryId, setCategoryId] = useState(assembly?.category_id ?? "");
@@ -70,15 +71,18 @@ export function AssemblyForm({ trigger, categories, catalogItems, assembly }: Pr
 
     let assemblyId = assembly?.id;
     if (assembly) {
-      await supabase.from("assemblies").update(assemblyPayload).eq("id", assembly.id);
-      await supabase.from("assembly_components").delete().eq("assembly_id", assembly.id);
+      const { error: e1 } = await supabase.from("assemblies").update(assemblyPayload).eq("id", assembly.id);
+      if (e1) { setError(e1.message); setSaving(false); return; }
+      const { error: e2 } = await supabase.from("assembly_components").delete().eq("assembly_id", assembly.id);
+      if (e2) { setError(e2.message); setSaving(false); return; }
     } else {
-      const { data } = await supabase.from("assemblies").insert(assemblyPayload).select("id").single();
+      const { data, error: e1 } = await supabase.from("assemblies").insert(assemblyPayload).select("id").single();
+      if (e1) { setError(e1.message); setSaving(false); return; }
       assemblyId = data?.id;
     }
 
     if (assemblyId && components.length > 0) {
-      await supabase.from("assembly_components").insert(
+      const { error: e3 } = await supabase.from("assembly_components").insert(
         components.map((c, i) => ({
           assembly_id: assemblyId!,
           type: c.type,
@@ -89,16 +93,18 @@ export function AssemblyForm({ trigger, categories, catalogItems, assembly }: Pr
           sort_order: i,
         }))
       );
+      if (e3) { setError(e3.message); setSaving(false); return; }
     }
 
     setSaving(false);
+    setError(null);
     setOpen(false);
     router.refresh();
   }
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger render={trigger as React.ReactElement}></SheetTrigger>
+      <SheetTrigger render={trigger}></SheetTrigger>
       <SheetContent className="w-full sm:max-w-xl overflow-y-auto">
         <SheetHeader className="mb-4">
           <SheetTitle>{assembly ? "Edit Assembly" : "New Assembly"}</SheetTitle>
@@ -177,6 +183,7 @@ export function AssemblyForm({ trigger, categories, catalogItems, assembly }: Pr
             </div>
           </div>
 
+          {error && <p className="text-sm text-destructive">{error}</p>}
           <div className="flex justify-end gap-2 pt-2">
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
             <Button type="submit" disabled={saving}>{saving ? "Saving…" : "Save Assembly"}</Button>

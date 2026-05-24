@@ -27,14 +27,12 @@ export default async function CustomersPage() {
             <tr>
               <th className="px-4 py-3 text-left font-medium">Name</th>
               <th className="px-4 py-3 text-left font-medium">Type</th>
-              <th className="px-4 py-3 text-left font-medium">Email</th>
-              <th className="px-4 py-3 text-left font-medium">Phone</th>
-              <th className="px-4 py-3 text-left font-medium">City</th>
+              <th className="px-4 py-3 text-left font-medium">Notes</th>
             </tr>
           </thead>
           <tbody>
             {customers?.length === 0 && (
-              <tr><td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">
+              <tr><td colSpan={3} className="px-4 py-8 text-center text-muted-foreground">
                 No customers yet. Add your first one.
               </td></tr>
             )}
@@ -49,9 +47,7 @@ export default async function CustomersPage() {
                 <td className="px-4 py-3">
                   <Badge variant="outline" className="capitalize">{c.type}</Badge>
                 </td>
-                <td className="px-4 py-3 text-muted-foreground">{c.email ?? "—"}</td>
-                <td className="px-4 py-3 text-muted-foreground">{c.phone ?? "—"}</td>
-                <td className="px-4 py-3 text-muted-foreground">{c.city ?? "—"}</td>
+                <td className="px-4 py-3 text-muted-foreground">{c.notes ?? "—"}</td>
               </tr>
             ))}
           </tbody>

@@ -1,8 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Plus } from "lucide-react";
+import { Plus, Pencil } from "lucide-react";
 import { CatalogItemForm } from "@/components/catalog/CatalogItemForm";
+import { DeactivateCatalogItem } from "@/components/catalog/DeactivateCatalogItem";
 
 export default async function CatalogPage() {
   const supabase = await createClient();
@@ -31,6 +32,7 @@ export default async function CatalogPage() {
               <th className="px-4 py-3 text-right font-medium">Unit Cost</th>
               <th className="px-4 py-3 text-center font-medium">Unit</th>
               <th className="px-4 py-3 text-right font-medium">Labor Hrs</th>
+              <th className="px-4 py-3" />
             </tr>
           </thead>
           <tbody>
@@ -41,11 +43,7 @@ export default async function CatalogPage() {
             )}
             {items?.map((item) => (
               <tr key={item.id} className="border-b last:border-0 hover:bg-muted/50 transition-colors">
-                <td className="px-4 py-2.5">
-                  <CatalogItemForm categories={categories ?? []} item={item as any} trigger={
-                    <button className="font-medium hover:underline text-left">{item.name}</button>
-                  } />
-                </td>
+                <td className="px-4 py-2.5 font-medium">{item.name}</td>
                 <td className="px-4 py-2.5 text-muted-foreground">
                   {(item.category as { name: string } | null)?.name ?? "—"}
                 </td>
@@ -54,6 +52,14 @@ export default async function CatalogPage() {
                 <td className="px-4 py-2.5 text-right font-medium">${item.unit_cost.toFixed(2)}</td>
                 <td className="px-4 py-2.5 text-center"><Badge variant="outline">{item.unit}</Badge></td>
                 <td className="px-4 py-2.5 text-right text-muted-foreground">{item.labor_hours}</td>
+                <td className="px-4 py-2.5">
+                  <div className="flex items-center gap-1 justify-end">
+                    <CatalogItemForm categories={categories ?? []} item={item as any} trigger={
+                      <button className="p-1 text-muted-foreground hover:text-foreground"><Pencil className="h-3.5 w-3.5" /></button>
+                    } />
+                    <DeactivateCatalogItem itemId={item.id} />
+                  </div>
+                </td>
               </tr>
             ))}
           </tbody>

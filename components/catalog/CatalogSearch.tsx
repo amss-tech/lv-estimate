@@ -32,10 +32,8 @@ export function CatalogSearch({ catalogItems, assemblies, onSelectItem, onSelect
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger render={<span />}>
-        <Button variant="outline" size="sm" className="h-7 text-xs">
-          <Plus className="h-3.5 w-3.5 mr-1" />Add Item
-        </Button>
+      <PopoverTrigger render={<Button variant="outline" size="sm" className="h-7 text-xs" />}>
+        <Plus className="h-3.5 w-3.5 mr-1" />Add Item
       </PopoverTrigger>
       <PopoverContent className="w-[520px] p-0" align="start">
         <div className="flex border-b">

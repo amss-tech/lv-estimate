@@ -9,7 +9,12 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Plus } from "lucide-react";
 
-export function NewEstimateButton() {
+interface Props {
+  customerId: string;
+  customerName: string;
+}
+
+export function NewEstimateFromCustomer({ customerId, customerName }: Props) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
@@ -23,7 +28,7 @@ export function NewEstimateButton() {
     const supabase = createClient();
     const { data, error: err } = await supabase
       .from("estimates")
-      .insert({ name: name.trim(), status: "draft", overhead_pct: 10, profit_pct: 15 })
+      .insert({ name: name.trim(), customer_id: customerId, status: "draft", overhead_pct: 10, profit_pct: 15 })
       .select("id")
       .single();
     setSaving(false);
@@ -40,13 +45,13 @@ export function NewEstimateButton() {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>New Estimate</DialogTitle>
+          <DialogTitle>New Estimate for {customerName}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleCreate} className="space-y-4 pt-2">
           <div className="space-y-2">
             <Label>Estimate Name *</Label>
-            <Input placeholder="e.g. Acme Corp — Camera System" value={name}
-              onChange={(e) => setName(e.target.value)} autoFocus required />
+            <Input placeholder="e.g. Camera System Phase 1"
+              value={name} onChange={(e) => setName(e.target.value)} autoFocus required />
           </div>
           {error && <p className="text-sm text-destructive">{error}</p>}
           <div className="flex justify-end gap-2">

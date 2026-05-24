@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
+import { ThemeToggle } from "./ThemeToggle";
 
 const nav = [
   { href: "/",            label: "Dashboard",  icon: LayoutDashboard },
@@ -33,7 +34,7 @@ export function Sidebar() {
   return (
     <aside className="flex flex-col w-56 min-h-screen bg-card border-r px-3 py-4 shrink-0">
       <div className="mb-6 px-2">
-        <span className="text-lg font-bold tracking-tight">LV Estimate</span>
+        <span className="text-lg font-bold tracking-tight">ESTICOMMS</span>
       </div>
       <nav className="flex-1 space-y-1">
         {nav.map(({ href, label, icon: Icon }) => (
@@ -50,6 +51,7 @@ export function Sidebar() {
           </Link>
         ))}
       </nav>
+      <ThemeToggle />
       <button onClick={handleSignOut}
         className="flex items-center gap-3 rounded-md px-2 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
         <LogOut className="h-4 w-4" />

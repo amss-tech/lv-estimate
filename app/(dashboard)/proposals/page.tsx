@@ -40,7 +40,9 @@ export default async function ProposalsPage() {
             )}
             {proposals?.map((p) => (
               <tr key={p.id} className="border-b last:border-0 hover:bg-muted/50 transition-colors">
-                <td className="px-4 py-3 font-medium">{p.title}</td>
+                <td className="px-4 py-3 font-medium">
+                  <Link href={`/proposals/${p.id}`} className="hover:underline">{p.title}</Link>
+                </td>
                 <td className="px-4 py-3 text-muted-foreground">
                   {(p.customer as { name: string } | null)?.name ?? "—"}
                 </td>
